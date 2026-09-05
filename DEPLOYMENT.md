@@ -3,6 +3,7 @@
 ### **Asignatura: Desarrollo de Aplicaciones Web (Código: 0423807T)**
 
 **Facilitador:** M.Sc. Ing. Gabriel Alexis Ramírez Sánchez  
+**Email:** gramirezs@unet.edu.ve  
 **Período Académico:** Septiembre, 2026  
 **San Cristóbal, Estado Táchira, Venezuela**
 
