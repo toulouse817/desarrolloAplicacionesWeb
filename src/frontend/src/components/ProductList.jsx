@@ -117,106 +117,107 @@ export const ProductList = ({ onEditProduct, onOpenCategoryManager }) => {
         <div className="flex flex-col sm:flex-row gap-3 w-full md:max-w-xl">
           {/* Barra de Búsqueda */}
           <div className="relative w-full">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <Search className="h-4 w-4" />
+            <div className="relative group flex-1">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-unet-600 dark:group-focus-within:text-unet-400 transition-colors">
+                <Search className="h-4 w-4" />
+              </div>
+              <input
+                type="text"
+                placeholder="Buscar por Nombre, SKU, Marca o Ubicación..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-4 focus:ring-unet-600/20 focus:border-unet-600 focus:outline-none text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900/60 transition-all duration-200"
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Buscar por Nombre, SKU, Marca o Ubicación..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-2 focus:ring-unet-600 focus:outline-none text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900/60"
-            />
+
+            {/* Filtro por Categoría */}
+            <div className="relative shrink-0">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <Filter className="h-3.5 w-3.5" />
+              </div>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="block w-full pl-8 pr-8 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:ring-4 focus:ring-unet-600/20 focus:border-unet-600 text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 cursor-pointer transition-all duration-200"
+              >
+                <option value="ALL">Todas las Categorías</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.name}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          {/* Filtro por Categoría */}
-          <div className="relative shrink-0">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-              <Filter className="h-3.5 w-3.5" />
-            </div>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="block w-full pl-8 pr-8 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-unet-600 text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 cursor-pointer"
-            >
-              <option value="ALL">Todas las Categorías</option>
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.name}>{cat.name}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Botones de Acción */}
-        <div className="flex items-center space-x-2 shrink-0">
-          <button
-            onClick={fetchData}
-            className="p-2 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl text-slate-500 dark:text-slate-300 transition-colors"
-            title="Refrescar catálogo"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          </button>
-
-          {user?.role === 'Admin' && (
+          {/* Botones de Acción */}
+          <div className="flex items-center space-x-2 shrink-0">
             <button
-              onClick={onOpenCategoryManager}
-              className="flex items-center space-x-1.5 px-3.5 py-2 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-colors"
+              onClick={fetchData}
+              className="p-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl text-slate-500 dark:text-slate-300 transition-all duration-200 active:scale-90 hover:scale-105"
+              title="Refrescar catálogo"
             >
-              <Layers className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
-              <span>Categorías</span>
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
-          )}
 
-          <button
-            onClick={() => onEditProduct(null)}
-            className="flex items-center space-x-1.5 bg-gradient-to-r from-unet-900 via-unet-800 to-unet-700 hover:from-unet-950 hover:to-unet-800 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md shadow-unet-900/20 transition-all transform active:scale-98"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Nuevo Producto</span>
-          </button>
-        </div>
-      </div>
+            {user?.role === 'Admin' && (
+              <button
+                onClick={onOpenCategoryManager}
+                className="flex items-center space-x-1.5 px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 hover:scale-105"
+              >
+                <Layers className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                <span>Categorías</span>
+              </button>
+            )}
 
-      {/* Manejo de Estados Asíncronos */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 space-y-4">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-unet-700"></div>
-          <span className="text-xs text-slate-500 font-medium">Cargando catálogo de inventario...</span>
+            <button
+              onClick={() => onEditProduct(null)}
+              className="flex items-center space-x-1.5 bg-gradient-to-r from-unet-900 via-unet-800 to-unet-700 hover:from-unet-950 hover:to-unet-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-unet-900/20 hover:shadow-lg hover:shadow-unet-900/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Nuevo Producto</span>
+            </button>
+          </div>
         </div>
-      ) : error ? (
-        <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 p-6 rounded-2xl text-center text-rose-800 dark:text-rose-300">
-          <AlertCircle className="h-10 w-10 text-rose-500 mx-auto mb-3" />
-          <p className="text-xs font-bold">{error}</p>
-          <button
-            onClick={fetchData}
-            className="mt-4 px-4 py-1.5 bg-rose-600 text-white rounded-xl text-xs font-bold hover:bg-rose-700 transition-colors"
-          >
-            Reintentar
-          </button>
-        </div>
-      ) : filteredProducts.length === 0 ? (
-        <div className="text-center py-16 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
-          <Package className="h-10 w-10 text-slate-400 mx-auto mb-2" />
-          <p className="text-xs font-bold text-slate-600 dark:text-slate-300">No se encontraron productos registrados.</p>
-          <p className="text-[11px] text-slate-400 mt-0.5">Pruebe ajustando los filtros o agregue un nuevo producto.</p>
-        </div>
-      ) : (
-        /* Tabla Principal de Catálogo */
-        <div className="overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-slate-700">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <th className="py-3.5 px-4">Producto & SKU</th>
-                <th className="py-3.5 px-4">Categoría / Marca</th>
-                <th className="py-3.5 px-4">Precios ($ Venta / Costo)</th>
-                <th className="py-3.5 px-4">Stock & Umbral</th>
-                <th className="py-3.5 px-4">Ubicación / Medida</th>
-                <th className="py-3.5 px-4 text-right">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60 text-xs">
-              {filteredProducts.map((p) => (
-                <tr key={p.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition-colors">
+
+        {/* Manejo de Estados Asíncronos */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4 animate-fade-in">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-unet-700"></div>
+            <span className="text-xs text-slate-500 font-medium">Cargando catálogo de inventario...</span>
+          </div>
+        ) : error ? (
+          <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 p-6 rounded-2xl text-center text-rose-800 dark:text-rose-300 animate-fade-in">
+            <AlertCircle className="h-10 w-10 text-rose-500 mx-auto mb-3" />
+            <p className="text-xs font-bold">{error}</p>
+            <button
+              onClick={fetchData}
+              className="mt-4 px-4 py-1.5 bg-rose-600 text-white rounded-xl text-xs font-bold hover:bg-rose-700 transition-colors"
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="text-center py-16 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 animate-fade-in">
+            <Package className="h-10 w-10 text-slate-400 mx-auto mb-2" />
+            <p className="text-xs font-bold text-slate-600 dark:text-slate-300">No se encontraron productos registrados.</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Pruebe ajustando los filtros o agregue un nuevo producto.</p>
+          </div>
+        ) : (
+          /* Tabla Principal de Catálogo */
+          <div className="overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-slate-700 animate-fade-in">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  <th className="py-3.5 px-4">Producto & SKU</th>
+                  <th className="py-3.5 px-4">Categoría / Marca</th>
+                  <th className="py-3.5 px-4">Precios ($ Venta / Costo)</th>
+                  <th className="py-3.5 px-4">Stock & Umbral</th>
+                  <th className="py-3.5 px-4">Ubicación / Medida</th>
+                  <th className="py-3.5 px-4 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60 text-xs">
+                {filteredProducts.map((p) => (
+                  <tr key={p.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition-colors duration-150">
                   
                   {/* Nombre y SKU */}
                   <td className="py-3.5 px-4">

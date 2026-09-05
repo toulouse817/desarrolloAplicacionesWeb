@@ -90,14 +90,14 @@ export const PowerBIDashboard = ({ products = [], categories = [] }) => {
   };
 
   return (
-    <div className="bg-slate-100 dark:bg-slate-900/90 p-3 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 transition-colors duration-300 overflow-hidden">
+    <div className="bg-slate-100 dark:bg-slate-900/90 p-3 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 transition-colors duration-300 overflow-hidden animate-fade-in">
       
       {/* ========================================================= */}
       {/* 1. ENCABEZADO SUPERIOR: DASHBOARD DE INDICADORES KPI      */}
       {/* ========================================================= */}
-      <div className="bg-gradient-to-r from-unet-900 via-unet-800 to-sky-700 text-white rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-gradient-to-r from-unet-900 via-unet-800 to-sky-700 text-white rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all duration-300">
         <div className="flex items-center space-x-3">
-          <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-inner">
+          <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-inner hover:scale-105 transition-transform duration-200">
             <Truck className="h-7 w-7 text-cyan-300" />
           </div>
           <div>
@@ -105,7 +105,7 @@ export const PowerBIDashboard = ({ products = [], categories = [] }) => {
               <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
                 INVENTARIO
               </h2>
-              <span className="bg-cyan-400 text-unet-950 text-xs font-black px-2.5 py-0.5 rounded-md uppercase tracking-wider">
+              <span className="bg-cyan-400 text-unet-950 text-xs font-black px-2.5 py-0.5 rounded-md uppercase tracking-wider shadow-sm">
                 Dashboard de Indicadores KPI
               </span>
             </div>
@@ -117,7 +117,7 @@ export const PowerBIDashboard = ({ products = [], categories = [] }) => {
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
           {/* Selector de Filtro de Categoría */}
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-3 py-1.5 flex items-center space-x-2">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-3 py-1.5 flex items-center space-x-2 transition-colors hover:bg-white/15">
             <span className="text-xs text-cyan-200 font-semibold shrink-0">Categoría:</span>
             <select
               value={selectedCategory}
@@ -144,7 +144,7 @@ export const PowerBIDashboard = ({ products = [], categories = [] }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
         
         {/* KPI 1: Costo Total / Inversión */}
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex items-center space-x-3 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
           <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-2xl border border-emerald-100 dark:border-emerald-800 shrink-0">
             <DollarSign className="h-6 w-6" />
           </div>
@@ -162,7 +162,7 @@ export const PowerBIDashboard = ({ products = [], categories = [] }) => {
         </div>
 
         {/* KPI 2: Stock Disponible */}
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex items-center space-x-3">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex items-center space-x-3 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
           <div className="p-3 bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 rounded-2xl border border-cyan-100 dark:border-cyan-800 shrink-0">
             <Package className="h-6 w-6" />
           </div>
@@ -180,7 +180,7 @@ export const PowerBIDashboard = ({ products = [], categories = [] }) => {
         </div>
 
         {/* KPI 3 (Gauge): Rotación de Inventario */}
-        <div className="bg-white dark:bg-slate-800 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-col items-center justify-center text-center relative">
+        <div className="bg-white dark:bg-slate-800 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-col items-center justify-center text-center relative hover:shadow-md hover:-translate-y-1 transition-all duration-200">
           <p className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">
             Rotación Inventario (Días)
           </p>
