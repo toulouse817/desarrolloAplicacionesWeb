@@ -178,6 +178,47 @@ El sistema incluye una siembra inicial de usuarios para pruebas de autorización
 
 ---
 
+## 🧪 Pruebas Unitarias Automatizadas (Testing Suite)
+
+El proyecto cuenta con una batería integral de pruebas unitarias automatizadas que garantiza la confiabilidad, estabilidad y correcto cumplimiento de las reglas de negocio en la capa de aplicación (`Core.Application`), sin depender de infraestructura externa o bases de datos físicas.
+
+### 🧰 Ecosistema y Herramientas de Testing:
+- **xUnit.net v2.8:** Framework estándar para la definición, estructuración y ejecución paralela de casos de prueba (`[Fact]` y `[Theory]`).
+- **Moq v4.20:** Librería para la creación de dobles de prueba (*mocks*) sobre las interfaces de repositorios (`IRepository<T>`, `IProductRepository`, `ITokenService`), permitiendo aislar completamente la lógica de negocio.
+- **FluentAssertions v6.12:** Biblioteca de aserciones expresivas y legibles que facilita la verificación de estados, colecciones y excepciones esperadas.
+- **FluentValidation v11.9:** Motor de validación declarativa testeado rigurosamente ante datos límite y entradas anómalas.
+
+---
+
+### 📋 Módulos y Cobertura de Pruebas:
+
+| Componente Bajo Prueba (SUT) | Archivo de Prueba | Casos Cubiertos | Reglas de Negocio Validadas |
+| :--- | :--- | :---: | :--- |
+| **`ProductService`** | `ProductServiceTests.cs` | 8 | • Mapeo bidireccional DTO / Entidad.<br>• Unicidad obligatoria del código SKU.<br>• Validación de existencia de categoría asociada.<br>• Persistencia y aislamiento de dependencias. |
+| **`CategoryService`** | `CategoryServiceTests.cs` | 4 | • Conteo dinámico de productos por categoría.<br>• Normalización y saneamiento de cadenas (*Trim*).<br>• Bloqueo de eliminación cuando existen productos asociados (Integridad referencial). |
+| **`UserService`** | `UserServiceTests.cs` | 3 | • Autenticación exitosa con credenciales válidas y generación de JWT.<br>• Rechazo de contraseña inválida mediante hash criptográfico SHA-256.<br>• Manejo de usuario inexistente retornando `null`. |
+| **`CreateProductValidator`** | `CreateProductValidatorTests.cs` | 14 | • Longitud de nombre (3 a 150 caracteres).<br>• Formato alfanumérico estricto del SKU (`^[A-Z0-9\-]{3,20}$`).<br>• Precio de venta estrictamente mayor a 0.<br>• Coherencia de inventario (`MaxStock > MinStock`). |
+| **`CreateCategoryValidator`** | `CreateCategoryValidatorTests.cs` | 4 | • Obligatoriedad y límites de caracteres en el nombre (2 a 80).<br>• Límite máximo de descripción (250 caracteres). |
+
+**Total de Pruebas Automatizadas:** 31 pruebas unitarias ejecutadas con 100% de tasa de éxito.
+
+---
+
+### ⚙️ Procedimiento de Ejecución de Pruebas:
+
+#### Opción A: Ejecución mediante Docker (No requiere .NET instalado en la máquina anfitriona)
+```bash
+docker run --rm -v "${PWD}:/app" -w /app mcr.microsoft.com/dotnet/sdk:10.0 dotnet test tests/Core.Application.Tests/Core.Application.Tests.csproj --verbosity normal
+```
+
+#### Opción B: Ejecución local con .NET SDK
+```bash
+# Desde la raíz del repositorio
+dotnet test tests/Core.Application.Tests/Core.Application.Tests.csproj
+```
+
+---
+
 ## 📂 Estructura del Repositorio
 
 ```
@@ -187,6 +228,7 @@ desarrolloAplicacionesWeb/
 │       └── ci-cd.yml          # Pipeline de Integración Continua (GitHub Actions)
 ├── src/
 │   ├── backend/
+│   │   ├── InventorySystem.sln # Solución principal de .NET
 │   │   ├── Core.Domain/       # Entidades puras y enums del negocio
 │   │   ├── Core.Application/  # DTOs, interfaces de servicio y validadores
 │   │   ├── Infrastructure/    # DbContext, Fluent API y repositorios EF Core
@@ -196,6 +238,10 @@ desarrolloAplicacionesWeb/
 │       ├── src/               # Componentes React, contextos y cliente HTTP
 │       ├── Dockerfile         # Construcción multi-stage con Nginx
 │       └── nginx.conf         # Configuración del servidor web de producción
+├── tests/
+│   └── Core.Application.Tests/ # Suite de pruebas unitarias xUnit + Moq
+│       ├── Services/          # Pruebas de lógica de negocio y servicios
+│       └── Validations/       # Pruebas de reglas declarativas FluentValidation
 ├── docker-compose.yml         # Orquestación multicontenedor local
 ├── DEPLOYMENT.md              # Guía de despliegue en la nube (Fly.io / Render)
 ├── .gitignore                 # Exclusiones de Git para .NET, Node y Docker
