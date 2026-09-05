@@ -204,6 +204,51 @@ El proyecto cuenta con una batería integral de pruebas unitarias automatizadas 
 
 ---
 
+### 🔬 Metodología y Proceso de Preparación de la Suite de Pruebas:
+
+La suite de pruebas fue concebida y desarrollada siguiendo una metodología rigurosa de ingeniería de software orientada a la verificación de la capa de aplicación:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                   Metodología de Preparación de Pruebas Unitarias                      │
+├───────────────────┬───────────────────┬───────────────────┬────────────────────────────┤
+│ 1. Arquitectura   │ 2. Aislamiento    │ 3. Patrón AAA     │ 4. Verificación            │
+│    y Proyecto     │    (Moq + DIP)    │    (Casos & Límites)    (Docker SDK & CI)      │
+├───────────────────┼───────────────────┼───────────────────┼────────────────────────────┤
+│ • xUnit.net 2.8   │ • IRepository<T>  │ • Arrange (Setup) │ • dotnet test              │
+│ • FluentAssertion │ • IProductRepo    │ • Act (Ejecución) │ • Contenedor .NET 10       │
+│ • Proyecto .csproj│ • ITokenService   │ • Assert (Verif.) │ • 31/31 Pruebas Exitosas   │
+└───────────────────┴───────────────────┴───────────────────┴────────────────────────────┘
+```
+
+#### 1. Estructuración y Enlace de Proyectos:
+- Se creó el proyecto independiente `tests/Core.Application.Tests/Core.Application.Tests.csproj` basado en .NET 10.
+- Se configuraron referencias directas a `Core.Application` y `Core.Domain`, evitando deliberadamente cualquier dependencia con `Infrastructure` o `Presentation.API` para garantizar que las pruebas sean exclusivamente unitarias.
+- Se incorporó el proyecto de pruebas al archivo de solución principal (`InventorySystem.sln`).
+
+#### 2. Aislamiento de Capas e Inversión de Dependencias (DIP):
+- Para comprobar la lógica de negocio sin conexión a una base de datos PostgreSQL real, se empleó **Moq** para interceptar todas las llamadas a las interfaces de persistencia y seguridad:
+  - `Mock<IRepository<Category>>`: Simula la consulta y persistencia de rubros.
+  - `Mock<IProductRepository>`: Simula consultas enriquecidas con categorías y validaciones de existencia de SKU (`ExistsSKUAsync`).
+  - `Mock<ITokenService>`: Simula la generación de credenciales criptográficas JWT.
+
+#### 3. Implementación del Patrón AAA (*Arrange, Act, Assert*):
+Cada prueba unitaria fue construida bajo tres fases claramente delimitadas:
+- **Arrange (Disposición):** Se inicializan las entidades de prueba en memoria y se programa el comportamiento esperado de los dobles de prueba utilizando `.Setup(...).ReturnsAsync(...)`.
+- **Act (Ejecución):** Se invoca el método del servicio (`System Under Test` o `SUT`) con los parámetros preparados.
+- **Assert (Verificación):** Se validan los resultados empleando **FluentAssertions** (`result.Should().NotBeNull()`, `result.Should().HaveCount(2)`) y se verifica con Moq que los repositorios fueron llamados exactamente el número de veces requerido (`_productRepoMock.Verify(r => r.SaveChangesAsync(), Times.Once)`).
+
+#### 4. Validación Declarativa de Fronteras y Límites (*Boundary Testing*):
+- En las pruebas de validadores (`CreateProductValidatorTests` y `CreateCategoryValidatorTests`), se emplearon atributos `[Theory]` y `[InlineData]` para someter el sistema a casos de prueba parametrizados con valores anómalos:
+  - Cadenas vacías, espacios en blanco y longitudes inferiores o superiores a los umbrales reglamentarios.
+  - Formatos inválidos de SKU (minúsculas, caracteres especiales, espacios intermedios).
+  - Precios negativos o iguales a cero y contradicciones lógicas de stock (`MaxStock <= MinStock`).
+
+#### 5. Ejecución Determinista en Entorno Contenerizado:
+- La validación final se ejecuta de forma reproducible dentro de una imagen de contenedor oficial de .NET SDK (`mcr.microsoft.com/dotnet/sdk:10.0`), asegurando que la suite pueda ejecutarse en cualquier entorno de desarrollo o integración continua (CI/CD) sin necesidad de herramientas locales preinstaladas.
+
+---
+
 ### ⚙️ Procedimiento de Ejecución de Pruebas:
 
 #### Opción A: Ejecución mediante Docker (No requiere .NET instalado en la máquina anfitriona)
