@@ -1,0 +1,19 @@
+/* ============================================================================
+   Asignatura: Desarrollo de Aplicaciones Web (Código: 0423807T)
+   Facilitador: M.Sc. Ing. Gabriel Alexis Ramírez Sánchez
+   Período Académico: Septiembre, 2026
+   San Cristóbal, Estado Táchira, Venezuela
+   ============================================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -1,0 +1,66 @@
+# ============================================================================
+# Asignatura: Desarrollo de Aplicaciones Web (Código: 0423807T)
+# Facilitador: M.Sc. Ing. Gabriel Alexis Ramírez Sánchez
+# Período Académico: Septiembre, 2026
+# San Cristóbal, Estado Táchira, Venezuela
+# ============================================================================
+
+services:
+  # -------------------------------------------------------------
+  # Servicio 1: Base de Datos Relacional (PostgreSQL)
+  # -------------------------------------------------------------
+  db:
+    image: postgres:15-alpine
+    container_name: inventory_db_container
+    restart: always
+    environment:
+      POSTGRES_DB: inventory_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d inventory_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # -------------------------------------------------------------
+  # Servicio 2: Backend ASP.NET Core 10 Web API
+  # -------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: src/backend/Presentation.API/Dockerfile
+    container_name: inventory_api_container
+    ports:
+      - "5000:5000"
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db;Database=inventory_db;Username=postgres;Password=postgres_password
+      - JwtSettings__Key=SuperSecretKeyForInventoryManagementSystemUNET2026!
+      - JwtSettings__Issuer=InventorySystemAPI
+      - JwtSettings__Audience=InventorySystemFrontend
+      - JwtSettings__DurationInMinutes=120
+    depends_on:
+      db:
+        condition: service_healthy # Asegurar que Postgres esté listo antes de correr la API
+
+  # -------------------------------------------------------------
+  # Servicio 3: Frontend React + Vite + Nginx SPA
+  # -------------------------------------------------------------
+  spa:
+    build:
+      context: .
+      dockerfile: src/frontend/Dockerfile
+    container_name: inventory_spa_container
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+
+
