@@ -24,8 +24,16 @@ import {
   Layers 
 } from 'lucide-react';
 
+/**
+ * Componente de catálogo y gestión operativa de productos.
+ * Proporciona búsqueda predictiva en memoria, filtrado por categorías,
+ * estado visual de existencias (badges) y acciones de creación, edición y eliminación.
+ */
 export const ProductList = ({ onEditProduct, onOpenCategoryManager }) => {
+  // Consumo del contexto de autenticación para validar privilegios de rol (Admin vs Empleado)
   const { user } = useContext(AuthContext);
+
+  // Estados locales para catálogo, categorías y parámetros de filtrado
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,10 +42,14 @@ export const ProductList = ({ onEditProduct, onOpenCategoryManager }) => {
   const [error, setError] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(null);
 
+  /**
+   * Obtiene la colección completa de productos y categorías desde la API REST
+   */
   const fetchData = async () => {
     setLoading(true);
     setError('');
     try {
+      // Sincronización concurrente de productos y categorías
       const [prodsData, catsData] = await Promise.all([
         api.get('/products'),
         api.get('/categories')
@@ -51,10 +63,14 @@ export const ProductList = ({ onEditProduct, onOpenCategoryManager }) => {
     }
   };
 
+  // Carga inicial al instanciar el componente
   useEffect(() => {
     fetchData();
   }, []);
 
+  /**
+   * Controlador para eliminación de un producto con confirmación previa
+   */
   const handleDelete = async (id, name) => {
     if (!window.confirm(`¿Está seguro de que desea eliminar el producto "${name}"?`)) {
       return;
@@ -63,6 +79,7 @@ export const ProductList = ({ onEditProduct, onOpenCategoryManager }) => {
     setDeleteLoading(id);
     try {
       await api.delete(`/products/${id}`);
+      // Actualización optimista del estado local retirando el elemento eliminado
       setProducts(products.filter((p) => p.id !== id));
     } catch (err) {
       alert(err.message || 'No se pudo eliminar el producto.');
@@ -71,7 +88,9 @@ export const ProductList = ({ onEditProduct, onOpenCategoryManager }) => {
     }
   };
 
-  // Filtrado reactivo en memoria por texto y categoría
+  /**
+   * Filtrado reactivo en memoria combinando búsqueda por texto y categoría seleccionada
+   */
   const filteredProducts = products.filter((p) => {
     const query = searchQuery.toLowerCase();
     const matchesSearch = 
@@ -85,7 +104,9 @@ export const ProductList = ({ onEditProduct, onOpenCategoryManager }) => {
     return matchesSearch && matchesCategory;
   });
 
-  // Badge de estado de existencias
+  /**
+   * Genera el indicador visual (*badge*) correspondiente según el nivel de stock físico
+   */
   const getStockBadge = (stock, minStock = 5) => {
     if (stock === 0) {
       return (
@@ -109,74 +130,78 @@ export const ProductList = ({ onEditProduct, onOpenCategoryManager }) => {
   };
 
   return (
+    // Contenedor principal de la tabla de catálogo con sombras y esquinas redondeadas
     <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-200/80 dark:border-slate-700 p-6 overflow-hidden transition-colors">
       
-      {/* Controles de búsqueda, filtrado y acciones */}
+      {/* Barra superior con controles de búsqueda, filtrado y acciones */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         
+        {/* Controles de Búsqueda y Filtro de Categoría */}
         <div className="flex flex-col sm:flex-row gap-3 w-full md:max-w-xl">
-          {/* Barra de Búsqueda */}
-          <div className="relative w-full">
-            <div className="relative group flex-1">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-unet-600 dark:group-focus-within:text-unet-400 transition-colors">
-                <Search className="h-4 w-4" />
-              </div>
-              <input
-                type="text"
-                placeholder="Buscar por Nombre, SKU, Marca o Ubicación..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-4 focus:ring-unet-600/20 focus:border-unet-600 focus:outline-none text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900/60 transition-all duration-200"
-              />
+          {/* Input de Búsqueda Reactiva */}
+          <div className="relative group flex-1">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-unet-600 dark:group-focus-within:text-unet-400 transition-colors">
+              <Search className="h-4 w-4" />
             </div>
-
-            {/* Filtro por Categoría */}
-            <div className="relative shrink-0">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <Filter className="h-3.5 w-3.5" />
-              </div>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="block w-full pl-8 pr-8 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:ring-4 focus:ring-unet-600/20 focus:border-unet-600 text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 cursor-pointer transition-all duration-200"
-              >
-                <option value="ALL">Todas las Categorías</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.name}>{cat.name}</option>
-                ))}
-              </select>
-            </div>
+            <input
+              type="text"
+              placeholder="Buscar por Nombre, SKU, Marca o Ubicación..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-4 focus:ring-unet-600/20 focus:border-unet-600 focus:outline-none text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900/60 transition-all duration-200"
+            />
           </div>
 
-          {/* Botones de Acción */}
-          <div className="flex items-center space-x-2 shrink-0">
-            <button
-              onClick={fetchData}
-              className="p-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl text-slate-500 dark:text-slate-300 transition-all duration-200 active:scale-90 hover:scale-105"
-              title="Refrescar catálogo"
+          {/* Menú Selector de Categorías */}
+          <div className="relative shrink-0">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <Filter className="h-3.5 w-3.5" />
+            </div>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="block w-full pl-8 pr-8 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:ring-4 focus:ring-unet-600/20 focus:border-unet-600 text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 cursor-pointer transition-all duration-200"
             >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            </button>
-
-            {user?.role === 'Admin' && (
-              <button
-                onClick={onOpenCategoryManager}
-                className="flex items-center space-x-1.5 px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 hover:scale-105"
-              >
-                <Layers className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
-                <span>Categorías</span>
-              </button>
-            )}
-
-            <button
-              onClick={() => onEditProduct(null)}
-              className="flex items-center space-x-1.5 bg-gradient-to-r from-unet-900 via-unet-800 to-unet-700 hover:from-unet-950 hover:to-unet-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-unet-900/20 hover:shadow-lg hover:shadow-unet-900/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Nuevo Producto</span>
-            </button>
+              <option value="ALL">Todas las Categorías</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.name}>{cat.name}</option>
+              ))}
+            </select>
           </div>
         </div>
+
+        {/* Botones de Acción Operativa */}
+        <div className="flex items-center space-x-2 shrink-0">
+          {/* Botón para Refrescar Catálogo */}
+          <button
+            onClick={fetchData}
+            className="p-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl text-slate-500 dark:text-slate-300 transition-all duration-200 active:scale-90 hover:scale-105"
+            title="Refrescar catálogo"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+
+          {/* Botón para Gestión de Categorías (Solo Administradores) */}
+          {user?.role === 'Admin' && (
+            <button
+              onClick={onOpenCategoryManager}
+              className="flex items-center space-x-1.5 px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 hover:scale-105"
+            >
+              <Layers className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+              <span>Categorías</span>
+            </button>
+          )}
+
+          {/* Botón para Registrar Nuevo Producto */}
+          <button
+            onClick={() => onEditProduct(null)}
+            className="flex items-center space-x-1.5 bg-gradient-to-r from-unet-900 via-unet-800 to-unet-700 hover:from-unet-950 hover:to-unet-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-unet-900/20 hover:shadow-lg hover:shadow-unet-900/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Nuevo Producto</span>
+          </button>
+        </div>
+      </div>
 
         {/* Manejo de Estados Asíncronos */}
         {loading ? (
