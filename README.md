@@ -78,6 +78,46 @@ El frontend integra un catálogo de animaciones fluidas y elegantes configuradas
 
 ---
 
+## 📸 Galería Visual y Capturas de Pantalla de la Aplicación
+
+A continuación se presentan las capturas de pantalla de alta fidelidad que ilustran el comportamiento visual, la identidad institucional UNET, el soporte de Modo Oscuro y los módulos clave del sistema:
+
+### 1. Autenticación Institucional y Pantalla de Acceso (Login)
+*Proyección de la tarjeta Glassmorphism con orbes ambientales animados, alternancia dinámica del logo institucional UNET y accesos rápidos de prueba.*
+
+| Modo Claro (*Light Mode*) | Modo Oscuro (*Dark Mode*) |
+| :---: | :---: |
+| ![Login Modo Claro](docs/screenshots/01_login_light.png) | ![Login Modo Oscuro](docs/screenshots/02_login_dark.png) |
+
+---
+
+### 2. Dashboard de Analítica & Indicadores KPI
+*Monitoreo en tiempo real de valorización monetaria de inventario ($), unidades físicas disponibles, rotación de existencias, salud de almacén y gráficos comparativos de stock óptimo vs. mínimo de seguridad.*
+
+| Dashboard - Modo Claro | Dashboard - Modo Oscuro |
+| :---: | :---: |
+| ![Dashboard Modo Claro](docs/screenshots/03_dashboard_light.png) | ![Dashboard Modo Oscuro](docs/screenshots/04_dashboard_dark.png) |
+
+---
+
+### 3. Catálogo Operativo de Inventario & Gestión de Fichas
+*Búsqueda predictiva multi-criterio (Nombre, SKU, Marca, Ubicación), filtrado por rubros, badges de estado de existencias (Óptimo, Crítico, Agotado) y acciones CRUD.*
+
+| Catálogo - Modo Claro | Catálogo - Modo Oscuro |
+| :---: | :---: |
+| ![Catálogo Modo Claro](docs/screenshots/05_catalogo_productos_light.png) | ![Catálogo Modo Oscuro](docs/screenshots/07_catalogo_dark.png) |
+
+---
+
+### 4. Modal de Registro y Edición de Productos
+*Formulario interactivo modal con animación `pop-in`, efecto backdrop blur y validaciones declarativas organizadas en tres secciones: Clasificación, Información Financiera y Ubicación física en Almacén.*
+
+<div align="center">
+  <img src="docs/screenshots/06_modal_nuevo_producto.png" alt="Modal de Registro de Producto" width="85%" />
+</div>
+
+---
+
 ## 🗄️ Modelo Entidad-Relación (Base de Datos PostgreSQL)
 
 El esquema relacional mapeado a través de **Entity Framework Core 10 (Code-First + Fluent API)** se estructura de la siguiente manera:
@@ -271,6 +311,8 @@ desarrolloAplicacionesWeb/
 ├── .github/
 │   └── workflows/
 │       └── ci-cd.yml          # Pipeline de Integración Continua (GitHub Actions)
+├── docs/
+│   └── screenshots/           # Capturas de pantalla de la interfaz (Light/Dark Mode)
 ├── src/
 │   ├── backend/
 │   │   ├── InventorySystem.sln # Solución principal de .NET

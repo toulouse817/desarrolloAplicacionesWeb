@@ -23,6 +23,7 @@ obj/
 .vscode/
 .idea/
 TestResults/
+test-results/
 *.Generated.cs
 
 # --------------------------------------------------
